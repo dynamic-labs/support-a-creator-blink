@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
+import { SolanaWalletConnectors } from "@dynamic-labs/solana";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +18,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <DynamicContextProvider settings={{
+        environmentId: '33003d8f-ffe6-4cc0-86b0-0f8d02b614f4',
+        walletConnectors: [SolanaWalletConnectors]
+      }}>
+        <body className={inter.className}>{children}</body>
+      </DynamicContextProvider>
     </html>
   );
 }
