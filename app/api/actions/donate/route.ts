@@ -9,7 +9,7 @@ export const GET = (req: Request) => {
         const { toPubkey } = validatedQueryParams(requestUrl);
 
         const baseHref = new URL(
-        `/api/actions/support?to=${toPubkey.toBase58()}`,
+        `/api/actions/donate?to=${toPubkey.toBase58()}`,
         requestUrl.origin,
         ).toString();
 
