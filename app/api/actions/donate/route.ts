@@ -106,14 +106,12 @@ export const POST = async (req: Request) => {
         const payload: ActionPostResponse = await createPostResponse({
             fields: {
                 transaction,
-                message: `Send ${amount} SOL to ${toPubkey.toBase58()}`,
+                message: `Send ${amount} SOL to ${toPubkey.toBase58()}`
             }
         });
 
-        const response = Response.json({payload, headers: ACTIONS_CORS_HEADERS});
-        console.log('response', response);
-
-        return response // eslint-disable-line
+        console.log('payload', payload);
+        return Response.json({payload, headers: ACTIONS_CORS_HEADERS}); // eslint-disable-line
     } catch(e) {
         console.log('error', e);
         let message = "An unknown error occurred";
