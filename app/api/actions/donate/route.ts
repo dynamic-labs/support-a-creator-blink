@@ -14,8 +14,8 @@ export const GET = (req: Request) => {
         ).toString();
 
         const payload: ActionGetResponse = {
-            icon: new URL("/support.svg", new URL(req.url ?? "").origin).toString(),
-            title: "Donate",
+            icon: new URL("/brand-image.png", requestUrl.origin).toString(),
+            title: "Support a creator",
             label: "Support",
             description: "Support the creator",
             links: {
@@ -46,7 +46,8 @@ export const GET = (req: Request) => {
                 ],
             },
         } 
-        return Response.json({payload, headers: ACTIONS_CORS_HEADERS})
+        return Response.json(payload, { headers: ACTIONS_CORS_HEADERS });
+
     } catch (err) {
         console.log(err);
         let message = "An unknown error occurred";
@@ -123,6 +124,7 @@ export const POST = async (req: Request) => {
 }
 
 function validatedQueryParams(requestUrl: URL): { amount: number; toPubkey: PublicKey } {
+  console.log(requestUrl)
     let toPubkey: PublicKey = DEFAULT_SOL_ADDRESS;
     let amount: number = DEFAULT_SOL_AMOUNT;
   
