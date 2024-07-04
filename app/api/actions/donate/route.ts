@@ -1,11 +1,12 @@
 import { ACTIONS_CORS_HEADERS, ActionGetResponse, ActionPostRequest, ActionPostResponse, createPostResponse } from "@solana/actions"
 import { Connection, PublicKey, clusterApiUrl, Transaction, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { DEFAULT_SOL_ADDRESS, DEFAULT_SOL_AMOUNT } from "./const";
+import { DEFAULT_SOL_ADDRESS, DEFAULT_SOL_AMOUNT, DEFAULT_NAME } from "./const";
 
 export const GET = (req: Request) => {
     try {
         const requestUrl = new URL(req.url);
-        const { toPubkey } = validatedQueryParams(requestUrl);
+        const { toPubkey, name } = validatedQueryParams(requestUrl);
+        console.log(toPubkey.toBase58(), name);
 
         const baseHref = new URL(
         `/api/actions/donate?to=${toPubkey.toBase58()}`,
@@ -14,9 +15,9 @@ export const GET = (req: Request) => {
 
         const payload: ActionGetResponse = {
             icon: new URL("/brand-image.png", requestUrl.origin).toString(),
-            title: "Support a creator",
+            title: `Support ${name}`,
             label: "Support",
-            description: "Support the creator",
+            description: "Donate to support the projects you love",
             links: {
                 actions: [
                 {
@@ -122,10 +123,10 @@ export const POST = async (req: Request) => {
     }
 }
 
-function validatedQueryParams(requestUrl: URL): { amount: number; toPubkey: PublicKey } {
-  console.log(requestUrl)
+function validatedQueryParams(requestUrl: URL): { amount: number; toPubkey: PublicKey, name: string} {
     let toPubkey: PublicKey = DEFAULT_SOL_ADDRESS;
     let amount: number = DEFAULT_SOL_AMOUNT;
+    let name: string = DEFAULT_NAME;
   
     try {
       if (requestUrl.searchParams.get("to")) {
@@ -144,9 +145,18 @@ function validatedQueryParams(requestUrl: URL): { amount: number; toPubkey: Publ
     } catch (err) {
       throw "Invalid input query parameter: amount";
     }
+
+    try {
+      if (requestUrl.searchParams.get("name")) {
+          name = requestUrl.searchParams.get("name")!;
+      }
+      } catch (err) {
+          throw "Invalid input query parameter: name";
+      }
   
     return {
       amount,
       toPubkey,
+      name
     };
   }

@@ -1,11 +1,13 @@
 'use client';
 
+import { useState } from "react";
 import { useDynamicContext } from "@/lib/dynamic";
 import useRootUrl from "@/app/hooks/useRootUrl";
 
 export default function Home() {
   const rootUrl = useRootUrl();
   const { setShowAuthFlow, primaryWallet } = useDynamicContext();
+  const [name, setName] = useState("");
 
   const handleGenerateSupporterLink = async () => {
     if (primaryWallet) return;
@@ -20,12 +22,19 @@ export default function Home() {
         {!primaryWallet && (
           <div>
             <p className="text-2xl mb-6 font-semibold">Generate your supporter link</p>
-            <button 
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              className="w-full bg-gray-800 text-white p-2 mb-4 rounded"
+            />
+            {name !== "" && <button 
               onClick={() => handleGenerateSupporterLink()} 
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
             >
               Generate
-            </button>
+            </button>}
           </div>
         )}
         {primaryWallet && (
@@ -33,15 +42,15 @@ export default function Home() {
             <p className="text-2xl mb-6 font-semibold">Your supporter link</p>
             <p className="text-lg mb-4">
               <a
-                href={`${rootUrl}/donate?address=${primaryWallet.address}`}
+                href={`${rootUrl}/donate?to=${primaryWallet.address}&name=${name}`}
                 className="text-blue-400 hover:text-blue-500 transition-colors duration-300"
               >
-               {rootUrl}/donate?address={primaryWallet.address}
+               {rootUrl}/donate?to={primaryWallet.address}&name={name}
               </a>
             </p>
             <button
               className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
-              onClick={() => navigator.clipboard.writeText(`${rootUrl}/donate?address=${primaryWallet.address}`)}
+              onClick={() => navigator.clipboard.writeText(`${rootUrl}/donate?to=${primaryWallet.address}&name=${name}`)}
             >
               Copy Link
             </button>
