@@ -5,7 +5,7 @@ export function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
   res.headers.set('Access-Control-Allow-Credentials', 'true');
-  res.headers.set('Access-Control-Allow-Origin', 'https://www.dial.to'); // Specify the allowed origin
+  res.headers.set('Access-Control-Allow-Origin', '*'); // Specify the allowed origin
   res.headers.set('Access-Control-Allow-Methods', 'GET,DELETE,PATCH,POST,PUT,OPTIONS');
   res.headers.set(
     'Access-Control-Allow-Headers',

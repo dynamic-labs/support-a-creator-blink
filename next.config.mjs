@@ -11,7 +11,7 @@ const nextConfig = {
               },
               {
                 key: 'Access-Control-Allow-Origin',
-                value: 'https://www.dial.to',
+                value: '*',
               },
               {
                 key: 'Access-Control-Allow-Methods',
