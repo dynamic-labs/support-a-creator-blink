@@ -110,9 +110,12 @@ export const POST = async (req: Request) => {
             }
         });
 
-        return Response.json({payload, headers: ACTIONS_CORS_HEADERS}); // eslint-disable-line
+        const response = Response.json({payload, headers: ACTIONS_CORS_HEADERS});
+        console.log('response', response);
+
+        return response // eslint-disable-line
     } catch(e) {
-        console.log(e);
+        console.log('error', e);
         let message = "An unknown error occurred";
         if (typeof e == "string") message = e;
         return new Response(message, {
