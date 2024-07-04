@@ -1,16 +1,16 @@
 'use client';
 
 import { useDynamicContext } from "@/lib/dynamic";
+import useRootUrl from "@/app/hooks/useRootUrl";
 
 export default function Home() {
+  const rootUrl = useRootUrl();
   const { setShowAuthFlow, primaryWallet } = useDynamicContext();
 
   const handleGenerateSupporterLink = async () => {
     if (primaryWallet) return;
     setShowAuthFlow(true);
   };
-
-  const rootUrl = `${window.location.protocol}//${window.location.host}`;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6">
