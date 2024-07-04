@@ -110,6 +110,13 @@ export const POST = async (req: Request) => {
             }
         });
 
+            // Decode the transaction
+        const transactionBuffer = Buffer.from(payload.transaction, 'base64');
+        const transactionAsString = Transaction.from(transactionBuffer);
+
+        console.log(transactionAsString);
+
+
         console.log('payload', payload);
         return Response.json({payload, headers: ACTIONS_CORS_HEADERS}); // eslint-disable-line
     } catch(e) {
