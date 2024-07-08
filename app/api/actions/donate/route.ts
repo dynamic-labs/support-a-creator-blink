@@ -1,23 +1,23 @@
 import { ACTIONS_CORS_HEADERS, ActionGetResponse, ActionPostRequest, ActionPostResponse, createPostResponse } from "@solana/actions"
 import { Connection, PublicKey, clusterApiUrl, Transaction, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
-
-import { DEFAULT_SOL_ADDRESS, DEFAULT_SOL_AMOUNT } from "./const";
+import { DEFAULT_SOL_ADDRESS, DEFAULT_SOL_AMOUNT, DEFAULT_NAME } from "./const";
 
 export const GET = (req: Request) => {
     try {
         const requestUrl = new URL(req.url);
-        const { toPubkey } = validatedQueryParams(requestUrl);
+        const { toPubkey, name } = validatedQueryParams(requestUrl);
+        console.log(toPubkey.toBase58(), name);
 
         const baseHref = new URL(
-        `/api/actions/support?to=${toPubkey.toBase58()}`,
+        `/api/actions/donate?to=${toPubkey.toBase58()}`,
         requestUrl.origin,
         ).toString();
 
         const payload: ActionGetResponse = {
-            icon: new URL("/support.svg", new URL(req.url ?? "").origin).toString(),
-            title: "Donate",
+            icon: new URL("/brand-image.png", requestUrl.origin).toString(),
+            title: `Support ${name}`,
             label: "Support",
-            description: "Support the creator",
+            description: "Donate to support the projects you love",
             links: {
                 actions: [
                 {
@@ -46,7 +46,8 @@ export const GET = (req: Request) => {
                 ],
             },
         } 
-        return Response.json({payload, headers: ACTIONS_CORS_HEADERS})
+        return Response.json(payload, { headers: ACTIONS_CORS_HEADERS });
+
     } catch (err) {
         console.log(err);
         let message = "An unknown error occurred";
@@ -105,13 +106,21 @@ export const POST = async (req: Request) => {
         const payload: ActionPostResponse = await createPostResponse({
             fields: {
                 transaction,
-                message: `Send ${amount} SOL to ${toPubkey.toBase58()}`,
+                message: `Send ${amount} SOL to ${toPubkey.toBase58()}`
             }
         });
 
+            // Decode the transaction
+        const transactionBuffer = Buffer.from(payload.transaction, 'base64');
+        const transactionAsString = Transaction.from(transactionBuffer);
+
+        console.log(transactionAsString);
+
+
+        console.log('payload', payload);
         return Response.json({payload, headers: ACTIONS_CORS_HEADERS}); // eslint-disable-line
     } catch(e) {
-        console.log(e);
+        console.log('error', e);
         let message = "An unknown error occurred";
         if (typeof e == "string") message = e;
         return new Response(message, {
@@ -122,9 +131,10 @@ export const POST = async (req: Request) => {
     }
 }
 
-function validatedQueryParams(requestUrl: URL): { amount: number; toPubkey: PublicKey } {
+function validatedQueryParams(requestUrl: URL): { amount: number; toPubkey: PublicKey, name: string} {
     let toPubkey: PublicKey = DEFAULT_SOL_ADDRESS;
     let amount: number = DEFAULT_SOL_AMOUNT;
+    let name: string = DEFAULT_NAME;
   
     try {
       if (requestUrl.searchParams.get("to")) {
@@ -143,9 +153,18 @@ function validatedQueryParams(requestUrl: URL): { amount: number; toPubkey: Publ
     } catch (err) {
       throw "Invalid input query parameter: amount";
     }
+
+    try {
+      if (requestUrl.searchParams.get("name")) {
+          name = requestUrl.searchParams.get("name")!;
+      }
+      } catch (err) {
+          throw "Invalid input query parameter: name";
+      }
   
     return {
       amount,
       toPubkey,
+      name
     };
   }

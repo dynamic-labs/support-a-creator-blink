@@ -5,3 +5,5 @@ export const DEFAULT_SOL_ADDRESS: PublicKey = new PublicKey(
 );
 
 export const DEFAULT_SOL_AMOUNT: number = 1.0;
+
+export const DEFAULT_NAME: string = "The Creator";
